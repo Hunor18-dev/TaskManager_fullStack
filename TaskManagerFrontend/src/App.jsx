@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getTasks, createTask } from './services/api';
+import { getTasks, createTask, updateTask, deleteTask } from './services/api';
 
 const getStatusLabel = (status) => {
   switch (status) {
@@ -25,14 +25,17 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await createTask({ id: 32, title, status: parseInt(status), createdAt: new Date().toISOString() });
+    await createTask({ id: 440, title, status: parseInt(status), createdAt: new Date().toISOString() });
     setTitle('');
     setStatus(0);
     loadTasks();
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 bg-white shadow-md rounded-md">
+    <h1 className="text-2xl font-bold mb-4">Task Manager</h1>
+
+
       <h1>📋 Task List</h1>
       
       <form onSubmit={handleSubmit}>
@@ -55,6 +58,18 @@ function App() {
         {tasks.map((task) => (
           <li key={task.id}>
             <strong>{task.title}</strong> - {getStatusLabel(task.status)}
+            <select
+              value={task.status}
+              onChange={(e) =>
+                updateTask(task.id, { ...task, status: parseInt(e.target.value) }).then(loadTasks)
+              }
+            >
+              <option value={0}>Incomplete</option>
+              <option value={1}>In Progress</option>
+              <option value={2}>Completed</option>
+            </select>
+            <button onClick={() => deleteTask(task.id).then(loadTasks)}>🗑️ Delete</button>
+
           </li>
         ))}
       </ul>
