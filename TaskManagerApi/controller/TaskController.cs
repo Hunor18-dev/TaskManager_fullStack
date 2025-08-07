@@ -31,7 +31,7 @@ public class TaskController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateTask(TaskItem taskItem)
+    public async Task<IActionResult> CreateTask([FromBody] TaskItem taskItem)
     {
         _context.TaskItems.Add(taskItem);
         await _context.SaveChangesAsync();

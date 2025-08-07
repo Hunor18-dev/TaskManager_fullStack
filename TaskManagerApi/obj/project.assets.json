@@ -3694,11 +3694,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\user\\Desktop\\TaskManagementSystem\\TaskManagerApi\\TaskManagerApi.csproj",
+      "projectUniqueName": "C:\\Users\\user\\Desktop\\TaskManager_fullstack\\TaskManagerApi\\TaskManagerApi.csproj",
       "projectName": "TaskManagerApi",
-      "projectPath": "C:\\Users\\user\\Desktop\\TaskManagementSystem\\TaskManagerApi\\TaskManagerApi.csproj",
+      "projectPath": "C:\\Users\\user\\Desktop\\TaskManager_fullstack\\TaskManagerApi\\TaskManagerApi.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user\\Desktop\\TaskManagementSystem\\TaskManagerApi\\obj\\",
+      "outputPath": "C:\\Users\\user\\Desktop\\TaskManager_fullstack\\TaskManagerApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"
