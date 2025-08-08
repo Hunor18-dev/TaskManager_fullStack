@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TaskManagerApi.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("data source=TaskManager.db"));
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
 builder.Services.AddCors(options =>
 {

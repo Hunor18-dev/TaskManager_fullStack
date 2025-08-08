@@ -1,28 +1,31 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TaskManagerApi.Interfaces;
+using TaskManagerApi.Models;
+
+namespace TaskManagerApi.Controllers;
 
 [Route("api/tasks")]
 [ApiController]
 public class TaskController : ControllerBase
 {
-    private readonly AppDbContext _context;
-
-    public TaskController(AppDbContext context)
+    private readonly ITaskRepository _taskRepository;
+    public TaskController(ITaskRepository taskRepository)
     {
-        _context = context;
+        this._taskRepository = taskRepository;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetTasks()
     {
-        var tasks = await _context.TaskItems.ToListAsync();
+        var tasks = await this._taskRepository.GetAllTasksAsync();
         return Ok(tasks);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetTask(int id)
     {
-        var task = await _context.TaskItems.FindAsync(id);
+        var task = await this._taskRepository.GetByIdAsync(id);
         if (task == null)
         {
             return NotFound();
@@ -31,13 +34,13 @@ public class TaskController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateTask([FromBody] TaskItem taskItem)
+    public async Task<IActionResult> CreateTask([FromBody] TaskManagerApi.Models.TaskItem taskItem)
     {
-        _context.TaskItems.Add(taskItem);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetTasks), new { id = taskItem.Id }, taskItem);
+        taskItem.CreatedAt = DateTime.UtcNow; // enforce backend time
+        await this._taskRepository.CreateAsync(taskItem);
+        return CreatedAtAction(nameof(GetTask), new { id = taskItem.Id }, taskItem);
     }
-
+    
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateTask(int id, TaskItem taskItem)
     {
@@ -46,16 +49,16 @@ public class TaskController : ControllerBase
             return BadRequest("Task ID mismatch.");
         }
 
-        var existingTask = await _context.TaskItems.FindAsync(id);
+        var existingTask = await this._taskRepository.GetByIdAsync(id);
         if (existingTask == null)
         {
             return NotFound();
         }
 
-        _context.Entry(taskItem).State = EntityState.Modified;
+        existingTask.Status = taskItem.Status;
         try
         {
-            await _context.SaveChangesAsync();
+            await this._taskRepository.UpdateAsync(existingTask);
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -72,33 +75,32 @@ public class TaskController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTask(int id)
     {
-        var taskItem = await _context.TaskItems.FindAsync(id);
+        var taskItem = await this._taskRepository.GetByIdAsync(id);
         if (taskItem == null)
         {
             return NotFound();
         }
 
-        _context.TaskItems.Remove(taskItem);
-        await _context.SaveChangesAsync();
+        await this._taskRepository.DeleteAsync(id);
         return NoContent();
     }
 
     [HttpPut("{id}/status")]
-    public async Task<IActionResult> UpdateTaskStatus(int id, [FromBody] TaskStatus statusUpdate)
+    public async Task<IActionResult> UpdateTaskStatus(int id, [FromBody] Models.TaskStatus statusUpdate)
     {
-        var taskItem = await _context.TaskItems.FindAsync(id);
+        var taskItem = await this._taskRepository.GetByIdAsync(id);
         if (taskItem == null)
         {
             return NotFound();
         }
 
         taskItem.Status = statusUpdate;
-        await _context.SaveChangesAsync();
+        await this._taskRepository.UpdateAsync(taskItem);
         return NoContent();
     }
 
     private bool _taskExists(int id)
     {
-        return _context.TaskItems.Any(e => e.Id == id);
+        return this._taskRepository.GetByIdAsync(id) != null;
     }
 }
