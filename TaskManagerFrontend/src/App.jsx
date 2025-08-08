@@ -10,14 +10,20 @@ const getStatusLabel = (status) => {
   }
 };
 
+
 function App() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState('');
   const [status, setStatus] = useState(0);
-
+  const [filter, setFilter] = useState(null);
+  
   const loadTasks = () => {
     getTasks().then(setTasks).catch(console.error);
   };
+  const filteredTasks = filter === null
+    ? tasks
+    : tasks.filter(task => task.status === filter);
+
 
   useEffect(() => {
     loadTasks();
@@ -54,8 +60,15 @@ function App() {
         <button type="submit">Add Task</button>
       </form>
 
+    <div className="mb-4">
+      <button onClick={() => setFilter(null)}>All</button>
+      <button onClick={() => setFilter(0)}>Incomplete</button>
+      <button onClick={() => setFilter(1)}>In Progress</button>
+      <button onClick={() => setFilter(2)}>Completed</button>
+    </div>
+
       <ul>
-        {tasks.map((task) => (
+        {filteredTasks.map((task) => (
           <li key={task.id}>
             <strong>{task.title}</strong> - {getStatusLabel(task.status)}
             <select
