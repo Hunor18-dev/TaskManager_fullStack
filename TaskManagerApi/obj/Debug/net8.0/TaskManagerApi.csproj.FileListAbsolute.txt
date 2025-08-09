@@ -170,8 +170,6 @@ C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\bin\Debug\net8.0\test
 C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\bin\Debug\net8.0\testhost.exe
 C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\bin\Debug\net8.0\appsettings.json
-C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\bin\Debug\net8.0\TaskManager.Tests\obj\project.assets.json
-C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\bin\Debug\net8.0\TaskManager.Tests\obj\TaskManager.Tests.csproj.nuget.dgspec.json
 C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\bin\Debug\net8.0\TaskManagerApi.exe
 C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\bin\Debug\net8.0\TaskManagerApi.deps.json
 C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\bin\Debug\net8.0\TaskManagerApi.runtimeconfig.json

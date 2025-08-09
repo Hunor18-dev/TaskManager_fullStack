@@ -47,6 +47,10 @@ namespace TaskManagerApi.Controllers
         public async Task<IActionResult> CreateTask([FromBody] TaskItem taskItem)
         {
             var createdTask = await _taskManager.CreateTaskAsync(taskItem);
+            if(createdTask == null)
+            {
+                return BadRequest("Task creation failed.");
+            }
             return CreatedAtAction(nameof(GetTask), new { id = createdTask.Id }, createdTask);
         }
 
