@@ -18,6 +18,8 @@ public class TaskItem
     public TaskStatus Status { get; set; } = TaskStatus.Incomplete;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // auto default
+
+    public int Position { get; set; }
 }
 
 public enum TaskStatus

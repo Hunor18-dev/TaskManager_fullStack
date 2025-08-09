@@ -9,4 +9,5 @@ public interface ITaskRepository
     Task CreateAsync(TaskItem taskItem);
     Task UpdateAsync(TaskItem taskItem);
     Task DeleteAsync(int id);
+    Task<int> GetMaxPosition();
 }

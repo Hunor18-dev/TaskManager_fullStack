@@ -13,7 +13,7 @@ class TaskRepository : ITaskRepository
 
     public async Task<IEnumerable<TaskItem>> GetAllTasksAsync()
     {
-        return await _context.TaskItems.ToListAsync();
+        return await _context.TaskItems.OrderBy(t => t.Position).ToListAsync();
     }
 
     public async Task<TaskItem?> GetByIdAsync(int id)
@@ -41,5 +41,9 @@ class TaskRepository : ITaskRepository
             _context.TaskItems.Remove(taskItem);
             await _context.SaveChangesAsync();
         }
+    }
+    public async Task<int> GetMaxPosition()
+    {
+        return await _context.TaskItems.MaxAsync(t => (int?)t.Position) ?? 0;
     }
 }

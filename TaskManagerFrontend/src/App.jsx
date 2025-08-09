@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getTasks, createTask, updateTask, deleteTask } from './services/api';
+import { getTasks, createTask, updateTask, deleteTask, updateTaskPositions } from './services/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
@@ -40,6 +40,11 @@ function App() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] })
   });
 
+  const reorderMutation = useMutation({
+    mutationFn: updateTaskPositions,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] })
+  });
+
   const filteredTasks = filter === null
     ? tasks
     : tasks.filter(task => task.status === filter);
@@ -63,8 +68,14 @@ function App() {
     const [moved] = reordered.splice(result.source.index, 1);
     reordered.splice(result.destination.index, 0, moved);
 
-    // You can send reordered array to backend if you store the order in DB
-    // Example: saveOrderMutation.mutate(reordered)
+    // Assign new positions (1-based index)
+    const updatedTasks = reordered.map((task, index) => ({
+      ...task,
+      position: index + 1
+    }));
+
+    // Send to backend
+    reorderMutation.mutate(updatedTasks);
   };
 
   if (isLoading) return <p>Loading tasks...</p>;

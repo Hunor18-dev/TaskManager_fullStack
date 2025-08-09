@@ -37,6 +37,8 @@ public class TaskController : ControllerBase
     public async Task<IActionResult> CreateTask([FromBody] TaskManagerApi.Models.TaskItem taskItem)
     {
         taskItem.CreatedAt = DateTime.UtcNow; // enforce backend time
+        var maxPosition = await this._taskRepository.GetMaxPosition();
+        taskItem.Position = maxPosition + 1;
         await this._taskRepository.CreateAsync(taskItem);
         return CreatedAtAction(nameof(GetTask), new { id = taskItem.Id }, taskItem);
     }
@@ -96,6 +98,18 @@ public class TaskController : ControllerBase
 
         taskItem.Status = statusUpdate;
         await this._taskRepository.UpdateAsync(taskItem);
+        return NoContent();
+    }
+
+    [HttpPost("reorder")]
+    public async Task<IActionResult> ReorderTasks([FromBody] List<TaskOrderDto> order)
+    {
+        foreach (var item in order)
+        {
+            var task = await this._taskRepository.GetByIdAsync(item.Id);
+            if (task != null) task.Position = item.Position;
+            await this._taskRepository.UpdateAsync(task);
+        }
         return NoContent();
     }
 

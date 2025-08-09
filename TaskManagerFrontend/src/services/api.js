@@ -22,3 +22,7 @@ export const updateTask = async (id, task) => {
 export const deleteTask = async (id) => {
   return api.delete(`/tasks/${id}`);
 };
+
+export const updateTaskPositions = async (tasks) => {
+  return api.post('/tasks/reorder', tasks);
+};
