@@ -1,120 +1,62 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TaskManagerApi.Interfaces;
 using TaskManagerApi.Models;
 
-namespace TaskManagerApi.Controllers;
-
-[Route("api/tasks")]
-[ApiController]
-public class TaskController : ControllerBase
+namespace TaskManagerApi.Controllers
 {
-    private readonly ITaskRepository _taskRepository;
-    public TaskController(ITaskRepository taskRepository)
+    [Route("api/tasks")]
+    [ApiController]
+    public class TaskController : ControllerBase
     {
-        this._taskRepository = taskRepository;
-    }
+        private readonly ITaskManager _taskManager;
 
-    [HttpGet]
-    public async Task<IActionResult> GetTasks()
-    {
-        var tasks = await this._taskRepository.GetAllTasksAsync();
-        return Ok(tasks);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetTask(int id)
-    {
-        var task = await this._taskRepository.GetByIdAsync(id);
-        if (task == null)
+        public TaskController(ITaskManager taskManager)
         {
-            return NotFound();
-        }
-        return Ok(task);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> CreateTask([FromBody] TaskManagerApi.Models.TaskItem taskItem)
-    {
-        taskItem.CreatedAt = DateTime.UtcNow; // enforce backend time
-        var maxPosition = await this._taskRepository.GetMaxPosition();
-        taskItem.Position = maxPosition + 1;
-        await this._taskRepository.CreateAsync(taskItem);
-        return CreatedAtAction(nameof(GetTask), new { id = taskItem.Id }, taskItem);
-    }
-    
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateTask(int id, TaskItem taskItem)
-    {
-        if (id != taskItem.Id)
-        {
-            return BadRequest("Task ID mismatch.");
+            _taskManager = taskManager;
         }
 
-        var existingTask = await this._taskRepository.GetByIdAsync(id);
-        if (existingTask == null)
+        [HttpGet]
+        public async Task<IActionResult> GetTasks()
         {
-            return NotFound();
+            return Ok(await _taskManager.GetTasksAsync());
         }
 
-        existingTask.Status = taskItem.Status;
-        try
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetTask(int id)
         {
-            await this._taskRepository.UpdateAsync(existingTask);
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!this._taskExists(id))
-            {
-                return NotFound();
-            }
-            throw;
+            var task = await _taskManager.GetTaskAsync(id);
+            return task == null ? NotFound() : Ok(task);
         }
 
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteTask(int id)
-    {
-        var taskItem = await this._taskRepository.GetByIdAsync(id);
-        if (taskItem == null)
+        [HttpPost]
+        public async Task<IActionResult> CreateTask([FromBody] TaskItem taskItem)
         {
-            return NotFound();
+            var createdTask = await _taskManager.CreateTaskAsync(taskItem);
+            return CreatedAtAction(nameof(GetTask), new { id = createdTask.Id }, createdTask);
         }
 
-        await this._taskRepository.DeleteAsync(id);
-        return NoContent();
-    }
-
-    [HttpPut("{id}/status")]
-    public async Task<IActionResult> UpdateTaskStatus(int id, [FromBody] Models.TaskStatus statusUpdate)
-    {
-        var taskItem = await this._taskRepository.GetByIdAsync(id);
-        if (taskItem == null)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTask(int id, [FromBody] TaskItem taskItem)
         {
-            return NotFound();
+            return await _taskManager.UpdateTaskAsync(id, taskItem) ? NoContent() : NotFound();
         }
 
-        taskItem.Status = statusUpdate;
-        await this._taskRepository.UpdateAsync(taskItem);
-        return NoContent();
-    }
-
-    [HttpPost("reorder")]
-    public async Task<IActionResult> ReorderTasks([FromBody] List<TaskOrderDto> order)
-    {
-        foreach (var item in order)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTask(int id)
         {
-            var task = await this._taskRepository.GetByIdAsync(item.Id);
-            if (task != null) task.Position = item.Position;
-            await this._taskRepository.UpdateAsync(task);
+            return await _taskManager.DeleteTaskAsync(id) ? NoContent() : NotFound();
         }
-        return NoContent();
-    }
 
-    private bool _taskExists(int id)
-    {
-        return this._taskRepository.GetByIdAsync(id) != null;
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateTaskStatus(int id, [FromBody] Models.TaskStatus status)
+        {
+            return await _taskManager.UpdateTaskStatusAsync(id, status) ? NoContent() : NotFound();
+        }
+
+        [HttpPost("reorder")]
+        public async Task<IActionResult> ReorderTasks([FromBody] List<TaskOrderDto> order)
+        {
+            return await _taskManager.ReorderTasksAsync(order) ? NoContent() : BadRequest("Invalid reorder request.");
+        }
     }
 }
