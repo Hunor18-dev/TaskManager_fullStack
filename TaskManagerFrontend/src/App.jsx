@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { getTasks, createTask, updateTask, deleteTask } from './services/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 const getStatusLabel = (status) => {
   switch (status) {
@@ -13,18 +14,17 @@ const getStatusLabel = (status) => {
 
 function App() {
   const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [status, setStatus] = useState(0);
   const [filter, setFilter] = useState(null);
 
   const queryClient = useQueryClient();
 
-  // ✅ useQuery v5 syntax
   const { data: tasks = [], isLoading, isError } = useQuery({
     queryKey: ['tasks'],
     queryFn: getTasks
   });
 
-  // ✅ useMutation v5 syntax
   const createMutation = useMutation({
     mutationFn: createTask,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] })
@@ -47,67 +47,133 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     createMutation.mutate({
-        title,
-        status: parseInt(status)
-      });
+      title,
+      description,
+      status: parseInt(status)
+    });
     setTitle('');
+    setDescription('');
     setStatus(0);
+  };
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const reordered = Array.from(filteredTasks);
+    const [moved] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, moved);
+
+    // You can send reordered array to backend if you store the order in DB
+    // Example: saveOrderMutation.mutate(reordered)
   };
 
   if (isLoading) return <p>Loading tasks...</p>;
   if (isError) return <p>Error loading tasks!</p>;
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-md">
-      <h1 className="text-2xl font-bold mb-4">Task Manager</h1>
+    <div className="p-6 max-w-2xl mx-auto bg-white shadow-lg rounded-lg">
+      <h1 className="text-3xl font-bold mb-6 text-center">📋 Task Manager</h1>
 
       {/* Form */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="space-y-3 mb-6">
         <input
           type="text"
           placeholder="Task title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
+          className="w-full p-2 border rounded"
         />
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
+        <textarea
+          placeholder="Task description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="w-full p-2 border rounded"
+        >
           <option value={0}>Incomplete</option>
           <option value={1}>In Progress</option>
           <option value={2}>Completed</option>
         </select>
-        <button type="submit">Add Task</button>
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        >
+          ➕ Add Task
+        </button>
       </form>
 
       {/* Filters */}
-      <div className="mb-4">
-        <button onClick={() => setFilter(null)}>All</button>
-        <button onClick={() => setFilter(0)}>Incomplete</button>
-        <button onClick={() => setFilter(1)}>In Progress</button>
-        <button onClick={() => setFilter(2)}>Completed</button>
+      <div className="flex justify-center gap-2 mb-4">
+        {['All', 'Incomplete', 'In Progress', 'Completed'].map((label, index) => (
+          <button
+            key={label}
+            onClick={() => setFilter(index === 0 ? null : index - 1)}
+            className="px-3 py-1 border rounded hover:bg-gray-100"
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
-      {/* Task List */}
-      <ul>
-        {filteredTasks.map((task) => (
-          <li key={task.id}>
-            <strong>{task.title}</strong> - {getStatusLabel(task.status)}
-            <select
-              value={task.status}
-              onChange={(e) =>
-                updateMutation.mutate({
-                  id: task.id,
-                  task: { ...task, status: parseInt(e.target.value) }
-                })
-              }
+      {/* Task List with Drag & Drop */}
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="taskList">
+          {(provided) => (
+            <ul
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className="space-y-3"
             >
-              <option value={0}>Incomplete</option>
-              <option value={1}>In Progress</option>
-              <option value={2}>Completed</option>
-            </select>
-            <button onClick={() => deleteMutation.mutate(task.id)}>🗑️ Delete</button>
-          </li>
-        ))}
-      </ul>
+              {filteredTasks.map((task, index) => (
+                <Draggable key={task.id} draggableId={String(task.id)} index={index}>
+                  {(provided) => (
+                    <li
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      ref={provided.innerRef}
+                      className="p-4 bg-gray-50 rounded shadow-sm flex flex-col gap-2"
+                    >
+                      <div className="flex justify-between items-center">
+                        <strong>{task.title}</strong>
+                        <button
+                          onClick={() => deleteMutation.mutate(task.id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                      <p className="text-sm text-gray-600">{task.description}</p>
+                      <div className="flex gap-2 items-center">
+                        <span>{getStatusLabel(task.status)}</span>
+                        <select
+                          value={task.status}
+                          onChange={(e) =>
+                            updateMutation.mutate({
+                              id: task.id,
+                              task: { ...task, status: parseInt(e.target.value) }
+                            })
+                          }
+                          className="p-1 border rounded"
+                        >
+                          <option value={0}>Incomplete</option>
+                          <option value={1}>In Progress</option>
+                          <option value={2}>Completed</option>
+                        </select>
+                      </div>
+                    </li>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </ul>
+          )}
+        </Droppable>
+      </DragDropContext>
     </div>
   );
 }
