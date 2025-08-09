@@ -402,3 +402,5 @@ C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\obj\Debug\net8.0\refi
 C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\obj\Debug\net8.0\TaskManagerApi.pdb
 C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\obj\Debug\net8.0\TaskManagerApi.genruntimeconfig.cache
 C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\obj\Debug\net8.0\ref\TaskManagerApi.dll
+C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\bin\Debug\net8.0\TaskManagerApi.xml
+C:\Users\user\Desktop\TaskManager_fullstack\TaskManagerApi\obj\Debug\net8.0\TaskManagerApi.xml
