@@ -13,34 +13,40 @@ namespace TaskManagerApi.Repositories
             _context = context;
         }
 
+        /// <inheritdoc/>
         public async Task<IEnumerable<TaskItem>> GetAllTasksAsync()
         {
             return await _context.TaskItems.OrderBy(t => t.Position).ToListAsync();
         }
 
+        /// <inheritdoc/>
         public async Task<TaskItem?> GetByIdAsync(int id)
         {
             return await _context.TaskItems.FindAsync(id);
         }
 
+        /// <inheritdoc/>
         public async Task CreateAsync(TaskItem taskItem)
         {
             _context.TaskItems.Add(taskItem);
             await _context.SaveChangesAsync();
         }
 
+        /// <inheritdoc/>
         public async Task UpdateAsync(TaskItem taskItem)
         {
             _context.TaskItems.Update(taskItem);
             await _context.SaveChangesAsync();
         }
 
+        /// <inheritdoc/>
         public async Task UpdateRangeAsync(IEnumerable<TaskItem> taskItems)
         {
             _context.TaskItems.UpdateRange(taskItems);
             await _context.SaveChangesAsync();
         }
 
+        /// <inheritdoc/>
         public async Task DeleteAsync(int id)
         {
             var taskItem = await _context.TaskItems.FindAsync(id);
@@ -51,6 +57,7 @@ namespace TaskManagerApi.Repositories
             }
         }
 
+        /// <inheritdoc/>
         public async Task<int> GetMaxPositionAsync()
         {
             return await _context.TaskItems.MaxAsync(t => (int?)t.Position) ?? 0;

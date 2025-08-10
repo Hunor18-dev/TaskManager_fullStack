@@ -25,6 +25,11 @@ namespace TaskManagerApi.Controllers
             _config = config;
         }
 
+        /// <summary>
+        /// Logs in a user.
+        /// </summary>
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost("login")]
         public IActionResult Login([FromBody] User loginUser)
         {

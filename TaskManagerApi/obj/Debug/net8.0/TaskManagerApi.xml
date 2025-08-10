@@ -4,6 +4,11 @@
         <name>TaskManagerApi</name>
     </assembly>
     <members>
+        <member name="M:TaskManagerApi.Controllers.AuthController.Login(TaskManagerApi.Models.User)">
+            <summary>
+            Logs in a user.
+            </summary>
+        </member>
         <member name="M:TaskManagerApi.Controllers.TaskController.GetTasks">
             <summary>
             Retrieves all tasks ordered by position.
@@ -38,6 +43,97 @@
             <summary>
             Reorders tasks based on the provided order list.
             </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskManager.GetTasksAsync">
+            <summary>
+            Retrieves all tasks.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskManager.GetTaskAsync(System.Int32)">
+            <summary>
+            Retrieves a specific task by its ID.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskManager.CreateTaskAsync(TaskManagerApi.Models.TaskItem)">
+            <summary>
+            Creates a new task.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskManager.UpdateTaskAsync(System.Int32,TaskManagerApi.Models.TaskItem)">
+            <summary>
+            Updates an existing task.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskManager.DeleteTaskAsync(System.Int32)">
+            <summary>
+            Deletes a task.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskManager.UpdateTaskStatusAsync(System.Int32,TaskManagerApi.Models.TaskStatus)">
+            <summary>
+            Updates the status of a task.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskManager.ReorderTasksAsync(System.Collections.Generic.List{TaskOrderDto})">
+            <summary>
+            Reorders tasks.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskRepository.GetAllTasksAsync">
+            <summary>
+            Retrieves all tasks.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskRepository.GetByIdAsync(System.Int32)">
+            <summary>
+            Retrieves a task by its ID.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskRepository.CreateAsync(TaskManagerApi.Models.TaskItem)">
+            <summary>
+            Creates a new task.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskRepository.UpdateAsync(TaskManagerApi.Models.TaskItem)">
+            <summary>
+            Updates an existing task.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskRepository.UpdateRangeAsync(System.Collections.Generic.IEnumerable{TaskManagerApi.Models.TaskItem})">
+            <summary>
+            Updates a range of tasks.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskRepository.DeleteAsync(System.Int32)">
+            <summary>
+            Deletes a task.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Interfaces.ITaskRepository.GetMaxPositionAsync">
+            <summary>
+            Retrieves the maximum position of tasks.
+            </summary>
+        </member>
+        <member name="M:TaskManagerApi.Managers.TaskManager.GetTasksAsync">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaskManagerApi.Managers.TaskManager.GetTaskAsync(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaskManagerApi.Managers.TaskManager.CreateTaskAsync(TaskManagerApi.Models.TaskItem)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaskManagerApi.Managers.TaskManager.UpdateTaskAsync(System.Int32,TaskManagerApi.Models.TaskItem)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaskManagerApi.Managers.TaskManager.DeleteTaskAsync(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaskManagerApi.Managers.TaskManager.UpdateTaskStatusAsync(System.Int32,TaskManagerApi.Models.TaskStatus)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaskManagerApi.Managers.TaskManager.ReorderTasksAsync(System.Collections.Generic.List{TaskOrderDto})">
+            <inheritdoc/>
         </member>
         <member name="T:TaskManagerApi.Migrations.Init">
             <inheritdoc />
@@ -74,6 +170,27 @@
         </member>
         <member name="M:TaskManagerApi.Migrations.AddPositionToTaskItem.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
+        </member>
+        <member name="M:TaskManagerApi.Repositories.TaskRepository.GetAllTasksAsync">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaskManagerApi.Repositories.TaskRepository.GetByIdAsync(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaskManagerApi.Repositories.TaskRepository.CreateAsync(TaskManagerApi.Models.TaskItem)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaskManagerApi.Repositories.TaskRepository.UpdateAsync(TaskManagerApi.Models.TaskItem)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaskManagerApi.Repositories.TaskRepository.UpdateRangeAsync(System.Collections.Generic.IEnumerable{TaskManagerApi.Models.TaskItem})">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaskManagerApi.Repositories.TaskRepository.DeleteAsync(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaskManagerApi.Repositories.TaskRepository.GetMaxPositionAsync">
+            <inheritdoc/>
         </member>
     </members>
 </doc>

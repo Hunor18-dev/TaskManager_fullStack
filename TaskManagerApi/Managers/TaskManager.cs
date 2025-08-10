@@ -12,16 +12,19 @@ namespace TaskManagerApi.Managers
             _taskRepository = taskRepository;
         }
 
+        /// <inheritdoc/>
         public async Task<IEnumerable<TaskItem>> GetTasksAsync()
         {
             return await _taskRepository.GetAllTasksAsync();
         }
 
+        /// <inheritdoc/>
         public async Task<TaskItem?> GetTaskAsync(int id)
         {
             return await _taskRepository.GetByIdAsync(id);
         }
 
+        /// <inheritdoc/>
         public async Task<TaskItem> CreateTaskAsync(TaskItem taskItem)
         {
             taskItem.CreatedAt = DateTime.UtcNow;
@@ -31,6 +34,7 @@ namespace TaskManagerApi.Managers
             return taskItem;
         }
 
+        /// <inheritdoc/>
         public async Task<bool> UpdateTaskAsync(int id, TaskItem taskItem)
         {
             var existingTask = await _taskRepository.GetByIdAsync(id);
@@ -44,6 +48,7 @@ namespace TaskManagerApi.Managers
             return true;
         }
 
+        /// <inheritdoc/>
         public async Task<bool> DeleteTaskAsync(int id)
         {
             var task = await _taskRepository.GetByIdAsync(id);
@@ -53,6 +58,7 @@ namespace TaskManagerApi.Managers
             return true;
         }
 
+        /// <inheritdoc/>
         public async Task<bool> UpdateTaskStatusAsync(int id, Models.TaskStatus status)
         {
             var task = await _taskRepository.GetByIdAsync(id);
@@ -63,6 +69,7 @@ namespace TaskManagerApi.Managers
             return true;
         }
 
+        /// <inheritdoc/>
         public async Task<bool> ReorderTasksAsync(List<TaskOrderDto> order)
         {
             if (order == null || !order.Any()) return false;
