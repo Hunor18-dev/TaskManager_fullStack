@@ -1,5 +1,8 @@
 using System.Reflection;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using TaskManagerApi;
 using TaskManagerApi.Interfaces;
 using TaskManagerApi.Managers;
 using TaskManagerApi.Repositories;
@@ -12,7 +15,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("data source=TaskManager.db"));
-builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
@@ -34,6 +36,26 @@ builder.Services.AddSwaggerGen(c =>
     c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
+builder.Services.Configure<AuthSettings>(
+    builder.Configuration.GetSection("AuthSettings"));
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer(options =>
+    {
+        var authSettings = builder.Configuration.GetSection("AuthSettings").Get<AuthSettings>();
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = authSettings.Issuer,
+            ValidAudience = authSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.Key))
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 
 var app = builder.Build();
@@ -48,6 +70,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 app.Run();
+
+
+

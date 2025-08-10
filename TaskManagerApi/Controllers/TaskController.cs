@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagerApi.Interfaces;
 using TaskManagerApi.Models;
 
 namespace TaskManagerApi.Controllers
 {
+    /*remove authorization for unit testing*/
+    [Authorize]
     [Route("api/tasks")]
     [ApiController]
     [Produces("application/json")]

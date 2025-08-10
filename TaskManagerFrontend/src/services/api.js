@@ -4,7 +4,19 @@ const api = axios.create({
 	baseURL: 'http://localhost:5096/api'
 });
 
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+    console.log(config.headers);
+  return config;
+});
+
 export default api;
+
+
+
+export const login = (username, password) =>
+  api.post('/auth/login', { username, password }).then(res => res.data);
 
 export const getTasks = async () => {
   const response = await api.get('/tasks');
@@ -26,3 +38,5 @@ export const deleteTask = async (id) => {
 export const updateTaskPositions = async (tasks) => {
   return api.post('/tasks/reorder', tasks);
 };
+
+
