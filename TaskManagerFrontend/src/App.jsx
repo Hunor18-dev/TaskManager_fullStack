@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import LoginPage from './LoginPage';
-import TaskManager from './TaskManager';
+import LoginPage from './pages/LoginPage';
+import TaskManager from './pages/TaskManager';
 
 function App() {
   const navigate = useNavigate();

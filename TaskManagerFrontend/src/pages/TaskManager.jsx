@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getTasks, createTask, updateTask, deleteTask, updateTaskPositions } from './services/api';
+import { getTasks, createTask, updateTask, deleteTask, updateTaskPositions } from '../services/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 

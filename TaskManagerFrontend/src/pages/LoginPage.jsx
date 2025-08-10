@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { login } from './services/api';
+import { login } from '../services/api';
 import { useNavigate } from "react-router-dom";
 
 export default function LoginPage({ onLogin }) {
